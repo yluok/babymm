@@ -7,7 +7,7 @@
 	<packaging>war</packaging>
 	<properties>
 		<webVersion>3.0</webVersion>
-		<springVersion>4.3.16.RELEASE</springVersion>
+		<springVersion>4.3.18.RELEASE</springVersion>
 		<hibernateVersion>4.3.5.Final</hibernateVersion>
 		<jsonVersion>1.9.13</jsonVersion>
 		<jacksonVersion> 2.8.11</jacksonVersion>
