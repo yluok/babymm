@@ -1,0 +1,12 @@
+0:0:0:0:0:0:0:1 - - [03/Apr/2019:10:02:56 +0800] "GET /babymm HTTP/1.1" 302 - http-bio-9001-exec-1 0
+0:0:0:0:0:0:0:1 - - [03/Apr/2019:10:02:56 +0800] "GET /babymm/ HTTP/1.1" 302 - http-bio-9001-exec-2 34
+0:0:0:0:0:0:0:1 - - [03/Apr/2019:10:02:56 +0800] "GET /babymm/login.html;jsessionid=41EE8C7ACAAB52D1A402B44426A6D6A9 HTTP/1.1" 200 3282 http-bio-9001-exec-3 4
+0:0:0:0:0:0:0:1 - - [03/Apr/2019:10:02:56 +0800] "GET /babymm/plugins/layui/layui.js HTTP/1.1" 200 6667 http-bio-9001-exec-5 3
+0:0:0:0:0:0:0:1 - - [03/Apr/2019:10:02:56 +0800] "GET /babymm/plugins/jQuery/jquery-2.2.3.min.js HTTP/1.1" 200 85659 http-bio-9001-exec-7 5
+0:0:0:0:0:0:0:1 - - [03/Apr/2019:10:02:56 +0800] "GET /babymm/plugins/layui/css/layui.css HTTP/1.1" 200 69524 http-bio-9001-exec-4 11
+0:0:0:0:0:0:0:1 - - [03/Apr/2019:10:02:56 +0800] "GET /babymm/css/login.css HTTP/1.1" 200 1411 http-bio-9001-exec-6 11
+0:0:0:0:0:0:0:1 - - [03/Apr/2019:10:02:56 +0800] "GET /babymm/plugins/layui/lay/modules/layer.js HTTP/1.1" 200 22041 http-bio-9001-exec-9 3
+0:0:0:0:0:0:0:1 - - [03/Apr/2019:10:02:56 +0800] "GET /babymm/plugins/layui/font/iconfont.woff?v=240 HTTP/1.1" 200 26744 http-bio-9001-exec-8 17
+0:0:0:0:0:0:0:1 - - [03/Apr/2019:10:02:56 +0800] "GET /babymm/plugins/layui/lay/modules/form.js HTTP/1.1" 200 9259 http-bio-9001-exec-8 4
+0:0:0:0:0:0:0:1 - - [03/Apr/2019:10:02:56 +0800] "GET /babymm/plugins/layui/css/modules/layer/default/layer.css?v=3.1.1 HTTP/1.1" 200 14425 http-bio-9001-exec-9 16
+0:0:0:0:0:0:0:1 - - [03/Apr/2019:10:02:56 +0800] "GET /babymm/favicon.ico HTTP/1.1" 200 5894 http-bio-9001-exec-9 14
