@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+	<!-- 配置緩存管理器 -->
+	<bean id="cacheManager" class="org.apache.shiro.cache.ehcache.EhCacheManager">
+		<!-- 指定 ehcache 的配置文件，下面会给到 -->
+		<property name="cacheManagerConfigFile" value="classpath:spring/ehcache-shiro.xml" />
+	</bean>
+
+	<!-- 配置进行授权和认证的 Realm，要新增一个java类来实现，下面会有，class=包名.类名，init-methood是初始化的方法 -->
+	<bean id="myRealm" class="com.babymm.shiro.UserRealm">
+		<property name="credentialsMatcher" ref="RetryLimitHashedCredentialsMatcher"></property>
+	</bean>
+
+	<bean id="RetryLimitHashedCredentialsMatcher" class="com.babymm.shiro.RetryLimitHashedCredentialsMatcher">
+		<constructor-arg name="cacheManager" ref="cacheManager"></constructor-arg>
+		<!-- 加密算法为MD5 -->
+		<property name="hashAlgorithmName" value="${hashAlgorithmName}"></property>
+		<!-- 加密次数 -->
+		<property name="hashIterations" value="${hashIterations}"></property>
+	</bean>
+
+	<!-- 配置 Shiro 的 SecurityManager Bean. -->
+	<bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+		<property name="cacheManager" ref="cacheManager" />
+		<property name="realm" ref="myRealm" />
+	</bean>
+
+	<!-- 配置 Bean 后置处理器: 会自动的调用和 Spring 整合后各个组件的生命周期方法. -->
+	<bean id="lifecycleBeanPostProcessor" class="org.apache.shiro.spring.LifecycleBeanPostProcessor" />
+
+	<!-- 配置一个过滤器，用于设定登陆成功后固定访问页面 -->
+	<bean id="loginFormAuthenticationFilter" class="com.babymm.shiro.LoginFormAuthenticationFilter" />
+
+
+
+	<bean id="logoutFilter" class="com.babymm.shiro.UserLogoutFilter">
+		<property name="redirectUrl" value="/login.html" />
+	</bean>
+
+	<!-- 配置 ShiroFilter bean: 该 bean 的 id 必须和 web.xml 文件中配置的 shiro filter 的 
+		name 一致 -->
+	<bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+		<!-- 装配 securityManager -->
+		<property name="securityManager" ref="securityManager" />
+		<!-- 配置登陆页面 -->
+		<property name="loginUrl" value="/login.html" />
+
+		<property name="unauthorizedUrl" value="/login.html" />
+		<!-- 具体配置需要拦截哪些 URL, 以及访问对应的 URL 时使用 Shiro 的什么 Filter 进行拦截. -->
+		<property name="filterChainDefinitions">
+			<value>
+				<!-- 配置登出: 使用 logout 过滤器 -->
+				/shiro-logout = logout
+				<!-- 定义登出方法 -->
+				/logout = logout
+				<!-- 配置允许非登陆可以访问的资源 -->
+				/css/** = anon
+				/static/** = anon
+				/images/** = anon
+				/js/** = anon
+				/plugins/** = anon
+				/user/login/** = anon
+				/user/add/** = anon
+				/user/find/uname/** = anon
+				/favicon.ico = anon
+				/login.html = anon
+				/register.html = anon
+				/email/active/** = anon
+				/invalidate.html = anon
+				/validate.html = anon
+				/validateError.html = anon
+				/forgetpswd.html = anon
+				/user/findpwd = anon
+				/forgetpswd2.html = anon
+				/403.html = anon
+				/user/restpwd = anon
+				<!-- 配置允许登陆访问的资源 -->
+				/** = authc
+			</value>
+			<!-- 将我自定义的页面放入过滤链中 -->
+		</property>
+		<property name="filters">
+			<map>
+				<entry key="loginfilter" value-ref="loginFormAuthenticationFilter" />
+				<entry key="logout" value-ref="logoutFilter" />
+			</map>
+		</property>
+	</bean>
+</beans>

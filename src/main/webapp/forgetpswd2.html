@@ -1,0 +1,101 @@
+
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>找回密码</title>
+<link rel="stylesheet" href="plugins/layui/css/layui.css" media="all" />
+<link rel="stylesheet" href="css/login.css" />
+<link rel="icon" href="favicon.ico" type="image/x-icon" />
+<!-- 如果不是最高级页面，则跳出，解决iframe框架问题 -->
+
+</head>
+
+<body class="beg-login-bg" onload="getParam('message')">
+	<div class="beg-login-box">
+		<header>
+			<h1>
+				<font color="black">密码重置</font>
+			</h1>
+		</header>
+		<div class="beg-login-main">
+			<form action="user/login" class="layui-form" method="post">
+				<div id="loginMessage" class="layui-form-item"></div>
+				<div class="layui-form-item">
+					<label class="beg-login-icon"> <i class="layui-icon">&#xe612;</i>
+					</label> <input type="text" name="code" lay-verify="required"
+						autocomplete="off" placeholder="验证码" class="layui-input">
+				</div>
+				<div class="layui-form-item">
+					<label class="beg-login-icon"> <i class="layui-icon">&#xe642;</i>
+					</label> <input type="password" name="password" lay-verify="required"
+						autocomplete="off" placeholder="新密码" class="layui-input">
+				</div>
+				<div class="layui-form-item">
+					<label class="beg-login-icon"> <i class="layui-icon">&#xe642;</i>
+					</label> <input type="password" name="repassword" lay-verify="required"
+						autocomplete="off" placeholder="重新输入新密码" class="layui-input">
+				</div>
+				<div>
+					<div class="beg-pull-left">
+						<a class="layui-btn" href="forgetpswd.html"> <i
+							class="layui-icon">&#xe619;</i> 返回上一步
+						</a>
+					</div>
+					<div class="beg-pull-right">
+						<button class="layui-btn layui-btn-normal" lay-submit
+							lay-filter="restpwd">
+							<i class="layui-icon">&#xe605;</i> 重置密码
+						</button>
+					</div>
+				</div>
+				<div class="beg-clear"></div>
+
+			</form>
+		</div>
+	</div>
+	<script type="text/javascript" src="plugins/layui/layui.js"></script>
+	<script>
+		layui.use([ 'layer', 'form' ], function() {
+			var layer = layui.layer,
+				$ = layui.jquery,
+				form = layui.form;
+			layer.alert("验证码已发送至你的电子邮箱");
+	
+	
+	
+			form.on('submit(restpwd)', function(data) {
+				if (data.field.password != data.field.repassword) {
+					layer.msg("两次密码不一致");
+					return false;
+				}
+				
+				var search = document.location.search.substr(1);
+				var username = search.split("=")[1];
+				$.ajax({
+					url : "user/restpwd",
+					type : "POST",
+					data : {
+						code : data.field.code,
+						password : data.field.password,
+						username : username
+					},
+					dataType : 'json',
+					success : function(result) {
+						if (result.success) {
+							layer.msg(result.message+ "，3秒后跳转至登陆页面");
+							setTimeout("javascript:location.href='login.html'",3000);
+						}else {
+							layer.msg(result.message);
+						}
+					}
+				});
+				return false;
+			});
+		});
+	</script>
+</body>
+
+</html>

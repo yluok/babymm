@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<meta charset="UTF-8">
+<title>添加记录</title>
+<link rel="stylesheet" href="plugins/layui/css/layui.css" media="all" />
+</head>
+<body>
+	<div class="layui-tab layui-tab-brief">
+		<ul class="layui-tab-title">
+			<li>收压岁钱</li>
+			<li onclick="getCashAmount()">存压岁钱</li>
+			<li class="layui-this">打理压岁钱</li>
+		</ul>
+
+		<div class="layui-tab-content">
+
+			<div class="layui-tab-item">
+				<form class="layui-form" action="record/subforLuckyMoney"
+					method="post">
+					<center>
+						<font size="3px">呼呼，收压岁钱啦！！！</font>
+					</center>
+					<br>
+					<div class="layui-form-item">
+						<label class="layui-form-label">金额</label>
+						<div class="layui-input-inline">
+							<input type="text" name="cashAmount" lay-verify="required"
+								required placeholder="压岁钱金额" autocomplete="off"
+								class="layui-input">
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<label class="layui-form-label">账户</label>
+						<div class="layui-input-block">
+							<select lay-verify="required" id="getLucky_cashId">
+								<option value="0">现金账户</option>
+							</select>
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<div class="layui-inline">
+							<label class="layui-form-label">时间</label>
+							<div class="layui-input-inline">
+								<input type="text" class="layui-input" id="luckytime" required
+									name="createtime" placeholder="yyyy-MM-dd"
+									lay-verify="required">
+							</div>
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<label class="layui-form-label">备注</label>
+						<div class="layui-input-block">
+							<textarea name="content" placeholder="请输入内容"
+								class="layui-textarea"></textarea>
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<div class="layui-input-block">
+							<center>
+								<button class="layui-btn" lay-submit
+									lay-filter="subforLuckyMoney">收啦！</button>
+							</center>
+						</div>
+					</div>
+				</form>
+			</div>
+			<div class="layui-tab-item">
+				<form class="layui-form" action="record/storeforLuckyMoney"
+					method="post">
+					<center>
+						<font size="3px">啦啦，存压岁钱啦！！！</font>
+					</center>
+					<br>
+					<div class="layui-form-item">
+						<label class="layui-form-label">转出账户</label>
+						<div class="layui-input-block">
+							<select lay-verify="required">
+								<option value="1">现金账户</option>
+							</select>
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<label class="layui-form-label">金额</label>
+						<div class="layui-input-inline">
+							<input type="text" name="cashAmount" required
+								lay-verify="required" placeholder="压岁钱金额" id="cashAmount"
+								autocomplete="off" class="layui-input">
+						</div>
+						<div class="layui-form-mid layui-word-aux">
+							<a href="javascript:void(0)" onclick="selectAll()"><font
+								size="3px" color="blue">全部</font></a>
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<label class="layui-form-label">转入账户</label>
+						<div class="layui-input-block">
+							<select lay-verify="required">
+								<option value="2">银行账户</option>
+							</select>
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<div class="layui-inline">
+							<label class="layui-form-label">时间</label>
+							<div class="layui-input-inline">
+								<input type="text" class="layui-input" id="storetime"
+									name="createtime" placeholder="yyyy-MM-dd"
+									lay-verify="required">
+							</div>
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<label class="layui-form-label">备注</label>
+						<div class="layui-input-block">
+							<textarea name="content" placeholder="请输入内容"
+								class="layui-textarea"></textarea>
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<div class="layui-input-block">
+							<center>
+								<button class="layui-btn" lay-submit
+									lay-filter="storeforLuckyMoney">存啦！</button>
+							</center>
+						</div>
+					</div>
+				</form>
+			</div>
+			<div class="layui-tab-item layui-show">
+				<div class="layui-form-item"></div>
+				<center>
+					<button class="layui-btn layui-btn-lg" id="income">
+						<i class="layui-icon">&#xe608;</i> 收入
+					</button>
+				</center>
+				<div class="layui-form-item"></div>
+				<center>
+					<button class="layui-btn layui-btn-lg layui-btn-danger"
+						id="consume">
+						<i class="layui-icon">&#xe609;</i>支出
+					</button>
+				</center>
+				<div class="layui-form-item"></div>
+				<center>
+					<button class="layui-btn layui-btn-lg layui-btn-normal"
+						id="transfer">
+						<i class="layui-icon">&#xe623;</i> 转账
+					</button>
+				</center>
+
+			</div>
+		</div>
+	</div>
+
+	<script type="text/javascript" src="plugins/layui/layui.js"></script>
+	<script type="text/javascript" src="plugins/jQuery/jquery-2.2.3.min.js"></script>
+	<script>
+		//注意：选项卡 依赖 element 模块，否则无法进行功能性操作
+		layui.use([ 'element', 'form', 'layer', 'laydate' ], function() {
+			var element = layui.element;
+			var form = layui.form;
+			var laydate = layui.laydate;
+			$ = layui.jquery;
+	
+			laydate.render({
+				elem : '#luckytime'
+			});
+	
+			laydate.render({
+				elem : '#storetime'
+			});
+	
+	
+			//点击收入后弹出一个收入图层
+			$("#income").click(
+				function() {
+					layer.open({
+						maxmin : true,
+						type : 2,
+						title : '收入',
+						content : 'income.html',
+						area : [ '696px', '435px' ]
+					});
+				}
+			)
+			//点击支出后弹出一个支出图层
+			$("#consume").click(
+				function() {
+					layer.open({
+						maxmin : true,
+						type : 2,
+						title : '支出',
+						content : 'consume.html',
+						area : [ '696px', '435px' ]
+					});
+				}
+			)
+	
+			//点击转账后弹出一个转账图层
+			$("#transfer").click(
+				function() {
+					layer.open({
+						maxmin : true,
+						type : 2,
+						title : '转账',
+						content : 'transfer.html',
+						area : [ '800px', '500px' ]
+					});
+				}
+			)
+	
+			//收压岁钱
+			form.on('submit(subforLuckyMoney)', function(data) {
+				$.ajax({
+					url : "record/subforLuckyMoney",
+					data : data.field,
+					type : "post",
+					dataType : "json",
+					success : function(result) {
+						layer.alert(result.message);
+					}
+				});
+				return false;
+			});
+	
+			//存压岁钱
+			form.on('submit(storeforLuckyMoney)', function(data) {
+				$.ajax({
+					url : "record/storeforLuckyMoney",
+					data : data.field,
+					type : "post",
+					dataType : "json",
+					success : function(result) {
+						layer.alert(result.message);
+					}
+				});
+				return false;
+			});
+	
+		});
+	</script>
+
+	<script type="text/javascript">
+	
+		//从数据库中查询可存入的压岁钱金额
+		var getCashAmount = function() {
+			$("#cahsAmount").val("");
+			$.ajax({
+				url : "account/cashAccount/amount",
+				type : "get",
+				success : function(result) {
+					$("#cashAmount").attr("placeholder", result);
+				}
+			});
+		}
+	
+		//将placeholder中的值填入input框中
+		var selectAll = function() {
+			$("#cashAmount").val($("#cashAmount").attr("placeholder"));
+		}
+	</script>
+</body>
+</html>

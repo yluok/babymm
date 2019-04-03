@@ -1,0 +1,141 @@
+
+<!DOCTYPE html>
+
+<html>
+
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>注册</title>
+<link rel="stylesheet" href="plugins/layui/css/layui.css" media="all" />
+<link rel="stylesheet" href="css/login.css" />
+<link rel="icon" href="favicon.ico" type="image/x-icon" />
+
+</head>
+
+<body class="beg-login-bg">
+	<div class="beg-login-box">
+		<header>
+			<h1>
+				<font color="black">欢迎注册</font>
+			</h1>
+		</header>
+		<div class="beg-login-main">
+			<div class="layui-form">
+				<div class="layui-form-item">
+					<i style="color:red" id="message"></i>
+				</div>
+				<div class="layui-form-item">
+					<label class="beg-login-icon"> <i class="layui-icon">&#xe612;</i></label>
+					<input type="text" name="username" placeholder="用户名"
+						class="layui-input" id="username">
+				</div>
+				<div class="layui-form-item">
+					<label class="beg-login-icon"> <i class="layui-icon">&#xe642;</i>
+					</label> <input type="password" name="password" placeholder="请输入密码"
+						class="layui-input" id="password">
+				</div>
+
+				<div class="layui-form-item">
+					<label class="beg-login-icon"> <i class="layui-icon">&#xe642;</i>
+					</label> <input type="password" placeholder="请重新输入密码" class="layui-input"
+						id="repassword">
+				</div>
+				<div>
+					<div class="beg-pull-right">
+						<button class="layui-btn" id="register">
+							<i class="layui-icon">&#xe609;</i> 注册
+						</button>
+					</div>
+					<div class="beg-pull-left">
+						<button class="layui-btn" id="return">
+							<i class="layui-icon">&#xe609;</i> 返回
+						</button>
+					</div>
+				</div>
+				<div class="beg-clear"></div>
+			</div>
+		</div>
+	</div>
+	<script type="text/javascript" src="plugins/jQuery/jquery-2.2.3.min.js"></script>
+	<script type="text/javascript" src="js/alertMsg.js"></script>
+	<script>	
+		$("#register").click(
+			function() {
+				//注册函数
+				//判断用户名是否为空
+				var password = document.getElementById('password').value;
+				var repassword = document.getElementById('repassword').value;
+				var username = document.getElementById('username').value;
+				if(username.trim() == "") {
+					$("#message").text('用户名不能为空');
+					return false;
+				}
+				if (password.trim() == "") {
+					$("#message").text('密码不能为空');
+					return false;
+				}
+	
+				if (password != repassword) {
+					$("#message").text('两次密码不一致');
+					return false;
+				}
+				
+				$.ajax({
+						url:'user/add',
+						contentType: "application/json",	//发送的数据格式，json
+						data:JSON.stringify({			//将发送的数据类型转换成json
+							'username':username,
+							'password':password
+						}),
+						type:'PUT',		//提交方式为put
+						dataType:"json",		//返回的数据类型格式
+						success : function(result) {
+							if(result.success) {
+								 $.MsgBox. Confirm ("消息", "恭喜注册成功!",function() {
+    								 location.href="login.html";
+								})
+
+							}else {
+								$.MsgBox.Alert("警告", result.message);
+							}	
+						}
+					})
+			}
+		);
+	
+		$("#return").click(
+			function() {
+				window.location.href = 'login.html';
+				return false;
+			}
+		);
+	
+	
+		//查询用户名是否存在
+		$("#username").blur(function() {
+			if ($("#username").val().trim() == '') {
+				$("#message").text("用户名不能为空");
+				return;
+			}
+			$.ajax({
+				url : "user/find/uname/" + $("#username").val(),
+				type : 'GET',
+				success : function(result) {
+					var result_obj = JSON.parse(result);
+					if (!result_obj.success) { //用户名存在
+						$("#message").text(result_obj.message);
+						return false;
+					} else {
+						$("#message").text('');
+					}
+				}
+			})
+		});
+		
+	</script>
+</body>
+
+</html>

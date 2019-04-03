@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:context="http://www.springframework.org/schema/context" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:amq="http://activemq.apache.org/schema/core"
+	xmlns:jms="http://www.springframework.org/schema/jms"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans   
+		http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context   
+		http://www.springframework.org/schema/context/spring-context.xsd">
+		
+		<context:component-scan base-package="com.babymm.jms"></context:component-scan>
+		
+		<!-- 厂商提供的connectionFactory，用于直接操作JMS的 -->
+		<bean id="targetConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
+			<property name="brokerURL" value="tcp://192.168.11.129:61616"></property>
+		</bean>
+		
+		<!-- spring框架提供的JMS支持的conenctionFactory，用于直接操作spring框架下的jms资源的 -->
+		<bean id="connectionFactory" class="org.springframework.jms.connection.SingleConnectionFactory">
+			<property name="targetConnectionFactory" ref="targetConnectionFactory"></property>
+		</bean>
+		
+		<!-- 一个工具类，用于发布消息、主题的 -->
+		<bean id="jmsTemplate" class="org.springframework.jms.core.JmsTemplate">
+			<property name="connectionFactory" ref= "connectionFactory"></property>
+		</bean>
+		
+		<!-- 定义了一个消息队列：发送邮箱激活链接-->
+		<bean id="queueDestionEmail" class="org.apache.activemq.command.ActiveMQQueue">
+			<constructor-arg name="name" value="babymm_activeEmail"></constructor-arg>
+		</bean>
+		
+		<!-- 定义了一个消息队列：发送验证码 -->
+		<bean id="queueDestionCode" class="org.apache.activemq.command.ActiveMQQueue">
+			<constructor-arg name="name" value="babymm_code"></constructor-arg>
+		</bean>
+		
+		
+</beans>

@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>账户列表</title>
+<meta name="renderer" content="webkit">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, maximum-scale=1">
+<link rel="stylesheet" href="plugins/layui/css/layui.css" media="all">
+<!-- 注意：如果你直接复制所有代码到本地，上述css路径需要改成你本地的 -->
+</head>
+<body>
+	<div class="layui-form-item"></div>
+	<div class="layui-form-item">
+		<button class="layui-btn" id="addAccount">
+			<i class="layui-icon">&#xe608;</i>添加
+		</button>
+		<button class="layui-btn" onclick="location.reload()">
+			<i class="layui-icon">&#xe669;</i>刷新
+		</button>
+
+	</div>
+	<table class="layui-hide" id="accountList" lay-filter="tableDemo"></table>
+
+	<script type="text/html" id="switchTpl">
+  		  {{#  if((d.name == '现金账户'  || d.name == '银行账户') && d.ishide == 0){ }}
+    		<input type="checkbox" name="ishide" checked disabled lay-skin="switch" lay-text="显示|隐藏" lay-filter="lockDemo" value="{{d.id}}">
+ 		  {{# } else if(d.name != '现金账户'  && d.name != '银行账户' && d.ishide == 0){ }}
+    		<input type="checkbox" name="ishide" checked lay-skin="switch" lay-text="显示|隐藏" lay-filter="lockDemo" value="{{d.id}}">	
+  		  {{# }	else { }}
+			<input type="checkbox" name="ishide" lay-skin="switch" lay-text="显示|隐藏" lay-filter="lockDemo" value="{{d.id}}">	
+		  {{#	} }}
+	</script>
+	<script type="text/html" id="operationTpl">
+		 {{# if(d.name == '现金账户' || d.name == '银行账户') {  }}
+			<button class="layui-btn layui-btn-sm layui-btn-disabled" id="{{d.id}}" value="{{d.name}}" onclick="showDetail({{d.id}})" disabled><i class="layui-icon">&#xe642;</i></button>
+       	 	<button class="layui-btn layui-btn-sm layui-btn-disabled" ><i class="layui-icon" disabled>&#xe640;</i></button>	
+		 {{# } else{  }}
+	  		<button class="layui-btn layui-btn-sm layui-btn" id="{{d.id}}" value="{{d.name}}" lay-event="updates"><i class="layui-icon">&#xe642;</i></button>
+        	<button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="del"><i class="layui-icon">&#xe640;</i></button>	
+		 {{# } }}
+	</script>
+	<script type="text/html" id="amountTpl">
+		{{d.cashAmount/100.0}}
+	</script>
+	<script type="text/html" id="incomeTpl">
+		{{d.income/100.0}}
+    </script>
+	<script type="text/html" id="consumeTpl">
+		{{d.consume/100.0}}
+	</script>
+	<script src="plugins/layui/layui.js" charset="utf-8"></script>
+	<script type="text/javascript" src="plugins/jQuery/jquery-2.2.3.min.js"></script>
+	<script type="text/javascript" src="js/alertMsg.js"></script>
+	<!-- 注意：如果你直接复制所有代码到本地，上述js路径需要改成你本地的 -->
+
+	<script>
+		layui.use([ 'table', 'element' ], function() {
+			var table = layui.table,
+				form = layui.form,
+				element = layui.element;
+			$ = layui.jquery;
+	
+			table.render({
+				elem : '#accountList',
+				url : 'account/findPageList',
+				cellMinWidth : 80,
+				cols : [ [
+					{
+						type : 'numbers',
+						align : 'center'
+					}
+					, {
+						field : 'name',
+						title : '账户名',
+						align : 'center'
+					}
+					, {
+						field : 'cashAmount',
+						title : '账户余额（元）',
+						align : 'center',
+						templet : '#amountTpl'
+					}
+					, {
+						field : 'income',
+						title : '账户总收入（元）',
+						align : 'center',
+						templet : '#incomeTpl'
+					}
+					, {
+						field : 'consume',
+						title : '账户总支出（元）',
+						align : 'center',
+						templet : '#consumeTpl'
+					}
+					, {
+						field : 'createtime',
+						title : '账户创建时间',
+						align : 'center'
+					}
+					, {
+						field : "ishide",
+						title : '状态',
+						templet : '#switchTpl',
+						align : 'center'
+					}
+					, {
+						title : '操作',
+						templet : '#operationTpl',
+						align : 'center'
+					}
+				] ],
+				page : true
+			});
+			//监听隐藏/显示操作
+			form.on('switch(lockDemo)', function(obj) {
+				var accountId = this.value;
+				var ishide = 1;
+				if (!obj.elem.checked) {
+					ishide = 0;
+				}
+				$.ajax({
+					url : 'account/setHideOrNot?accountId=' + accountId + '&ishide=' + ishide,
+					dataType : "json",
+					success : function(result) {
+						layer.alert(result.message);
+					}
+				})
+	
+			});
+	
+			//监听添加按钮
+			$(document).on('click', '#addAccount', function() {
+				layer.prompt({
+					formType : 0,
+					title : '请输入新增账户名',
+				}, function(value, index, elem) {
+					$.ajax({
+						url : "account/add",
+						type : "POST",
+						dataType : "json",
+						data : {
+							newAccountName : value
+						},
+						success : function(result) {
+							layer.close(index);			
+							if (result.success) {
+								window.location.reload();
+							}
+							layer.msg(result.message);
+						}
+					})
+				})
+			});
+	
+			//监听删除和修改工具按钮
+			table.on('tool(tableDemo)', function(obj) {
+				var data = obj.data;
+				if (obj.event === 'updates') { //修改账户名操作
+					layer.prompt({
+						formType : 0,
+						value : data.name,
+						title : '修改账户名',
+					}, function(value, index, elem) {
+						$.ajax({
+							url : "account/updateNameById",
+							type : "POST",
+							dataType : "json",
+							data : {
+								id : data.id,
+								newName : value
+							},
+							success : function(result) {
+								layer.close(index);						
+								if (result.success) {
+									window.location.reload();
+								}
+								layer.msg(result.message);
+							}
+						})
+					});
+				} else if (obj.event === 'del') { //删除账户操作
+					layer.confirm('真的要删除吗？', function(index) {
+						$.ajax({
+							url : "account/deleteAccountById?id=" + data.id,
+							dataType : "json",
+							success : function(result) {
+								layer.close(index);
+								layer.msg(result.message);
+								if (result.success) {
+									obj.del();
+								}
+							}
+						})
+					});
+				}
+			});
+	
+		})
+	</script>
+</body>
+</html>

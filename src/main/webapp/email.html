@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset="utf-8">
+<title>丫丫money</title>
+<meta name="renderer" content="webkit">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="format-detection" content="telephone=no">
+
+<link rel="stylesheet" href="plugins/layui/css/layui.css" media="all" />
+<link rel="stylesheet" href="css/global.css" media="all">
+
+
+</head>
+
+<body>
+	<form class="layui-form">
+		<div class="layui-form-item"></div>
+		<div class="layui-form-item" pane="">
+			<label class="layui-form-label">邮箱：</label>
+			<div class="layui-input-inline">
+				<input type="text" required lay-verify="required"
+					placeholder="请输入163或者qq邮箱" autocomplete="off" class="layui-input"
+					name="email">
+			</div>
+			<button class="layui-btn" lay-submit lay-filter="active">发送绑定邮件</button>
+		</div>
+		<div class="layui-form-item">
+			&nbsp;&nbsp;&nbsp;请及时绑定邮箱，激活后您将拥有如下功能：<br> &nbsp;&nbsp;&nbsp;<font color="red">1、修改密码； </font><br>
+			&nbsp;&nbsp;&nbsp;<font color="red">2、密码忘记找回</font><br>
+			&nbsp;&nbsp;&nbsp;备注：<br>
+			&nbsp;&nbsp;&nbsp;1、该绑定提醒只在<font color="red">第一次</font>登陆的时候弹出；<br>
+			&nbsp;&nbsp;&nbsp;2、如果第一次登陆后没有完成邮箱激活绑定，请点击<font color="red">右上角头像，在基本资料</font>中绑定<br>
+			&nbsp;&nbsp;&nbsp;3、为了您的账户安全，请及时绑定邮箱。
+		</div>
+	</form>
+	<script src="plugins/layui/layui.js"></script>
+	<script type="text/javascript">
+	
+		layui.use([ 'form', 'layer' ], function() {
+			var form = layui.form,
+				layer = layui.layer,
+				$ = layui.jquery;
+			
+			form.on('submit(active)', function(data) {
+				$.ajax({
+					url : 'email/' + data.field.email,
+					type : 'GET',
+					dataType : "json",
+					success : function(result) {
+						layer.alert(result.message);					
+					}
+				})
+				return false;		//阻止layui的自动提交表单功能，而使用我们的ajax方式提交
+			}
+			)
+		})
+	</script>
+
+</body>
+
+</html>

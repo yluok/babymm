@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>个人中心</title>
+<link rel="stylesheet" href="plugins/layui/css/layui.css" media="all" />
+<link rel="stylesheet" href="css/login.css" media="all" />
+</head>
+<body>
+	<form class="layui-form">
+		<div class="layui-form-item"></div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">用户名</label>
+			<div class="layui-input-inline">
+				<input type="text" name="username" disabled class="layui-input"
+					id="username">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">昵称</label>
+			<div class="layui-input-inline">
+				<input type="text" name="nickname" class="layui-input" id="nickname"
+					disabled>
+			</div>
+			<div class='layui-form-mid'>
+				<a href='javascript:void(0)' id='modifynickname'><font
+					color="blue">修改</font></font></a>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">邮箱地址</label>
+			<div class="layui-input-inline" id="email_bar">
+				<input type="text" name="email" disabled class="layui-input"
+					id="email">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">微信号</label>
+			<div class="layui-input-inline">
+				<input type="text" name="wechatId" disabled class="layui-input"
+					id="wechatId">
+			</div>
+		</div>
+	</form>
+</body>
+<script type="text/javascript" src="plugins/jQuery/jquery-2.2.3.min.js"></script>
+<script type="text/javascript">
+	$.ajax({
+		url : 'user/getLogininfo',
+		dataType : "json", //表示我需要的是json格式对象，这样其才能识别出json对象
+		success : function(result) {
+			$("#nickname").val(result.nickname);
+			$("#username").val(result.username);
+			if (result.email == null) {
+				$("#email_bar").after("<div class='layui-form-mid'><a href='javascript:void(0)' id='banding'>绑定</a></div>");
+			}
+			$("#email").val(result.email);
+			$("#wechatId").val(result.wechatId);
+		}
+	})
+</script>
+<script src="plugins/layui/layui.js"></script>
+<script type="text/javascript">
+	layui.use([ 'layer', 'form' ], function() {
+		var layer = layui.layer,
+			$ = layui.jquery,
+			form = layui.form;
+		$(document).on('click', '#banding', function() {
+			layer.open({
+				title : '请及时绑定邮箱',
+				maxmin : true,
+				type : 2,
+				content : 'email.html',
+				area : [ '600px', '280px' ]
+			});
+
+		})
+		$(document).on('click', '#modifynickname', function() {
+			layer.prompt({
+				formType : 2,
+				title : '请输入新的昵称',
+				area : [ '200px', '20px' ] //自定义文本域宽高
+			}, function(value, index, elem) {
+				$.ajax({
+					url:'user/updateNickname',
+					data:{
+						nickname:value
+					},
+					type:"POST",
+					dataType:'json',
+					success: function(result) {
+						if(result.success) {
+							layer.msg(result.message);
+							layer.close(index);
+						}else {
+							layer.msg(result.message);
+						}
+					}
+				})	
+			});
+		})
+	})
+</script>
+</html>

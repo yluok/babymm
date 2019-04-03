@@ -1,0 +1,81 @@
+
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>找回密码</title>
+<link rel="stylesheet" href="plugins/layui/css/layui.css" media="all" />
+<link rel="stylesheet" href="css/login.css" />
+<link rel="icon" href="favicon.ico" type="image/x-icon" />
+<!-- 如果不是最高级页面，则跳出，解决iframe框架问题 -->
+
+</head>
+
+<body class="beg-login-bg" onload="getParam('message')">
+	<div class="beg-login-box">
+		<header>
+			<h1>
+				<font color="black">密码找回</font>
+			</h1>
+		</header>
+		<div class="beg-login-main">
+			<form action="user/login" class="layui-form" method="post">
+				<div id="loginMessage" class="layui-form-item"></div>
+				<div class="layui-form-item">
+					<label class="beg-login-icon"> <i class="layui-icon">&#xe612;</i>
+					</label> <input type="text" name="username" lay-verify="required"
+						autocomplete="off" placeholder="用户名" class="layui-input">
+				</div>
+				<div class="layui-form-item">
+					<label class="beg-login-icon"> <i class="layui-icon">&#xe642;</i>
+					</label> <input type="text" name="email" lay-verify="required"
+						autocomplete="off" placeholder="电子邮箱" class="layui-input">
+				</div>
+				<div>
+					<div class="beg-pull-left">
+						<a class="layui-btn" href="login.html"> <i
+							class="layui-icon">&#xe619;</i> 返回
+						</a>
+					</div>
+					<div class="beg-pull-right">
+						<button class="layui-btn layui-btn-normal" lay-submit
+							lay-filter="next">
+							<i class="layui-icon">&#xe61a;</i> 下一步
+						</button>
+					</div>
+				</div>
+				<div class="beg-clear"></div>
+
+			</form>
+		</div>
+	</div>
+	<script type="text/javascript" src="plugins/layui/layui.js"></script>
+	<script>
+		layui.use([ 'layer', 'form' ], function() {
+			var layer = layui.layer,
+				$ = layui.jquery,
+				form = layui.form;
+	
+			form.on('submit(next)', function(data) {
+				$.ajax({
+					url:"user/findpwd",
+					type:"POST",
+					data:data.field,
+					dataType:'json',
+					success:function(result) {
+						if(result.success) {
+							window.location.href="forgetpswd2.html?username="+ data.field.username;
+						}else {
+							layer.alert(result.message);
+						}
+					}					
+				});	
+				return false;		
+			});
+		});
+	</script>
+</body>
+
+</html>

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>添加支出</title>
+
+<meta name="keywords" content="keyword1,keyword2,keyword3">
+<meta name="description" content="this is my page">
+<meta name="content-type" content="text/html; charset=UTF-8">
+
+<!--<link rel="stylesheet" type="text/css" href="./styles.css">-->
+<link rel="stylesheet" href="plugins/layui/css/layui.css" media="all" />
+
+</head>
+
+<body>
+	<form class="layui-form">
+		<div class="layui-form-item"></div>
+		<center>
+			<font size="3px">呜呜，压岁钱跑了一笔！！！</font>
+		</center>
+		<br>
+		<div class="layui-form-item">
+			<label class="layui-form-label">金额</label>
+			<div class="layui-input-inline">
+				<input type="text" name="cashAmount" lay-verify="required"
+					placeholder="支出金额" autocomplete="off" class="layui-input">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">账户</label>
+			<div class="layui-input-block">
+				<select name="outAccountId" lay-verify="required">
+					<option value="">请选择</option>
+				</select>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-inline">
+				<label class="layui-form-label">时间</label>
+				<div class="layui-input-inline">
+					<input type="text" class="layui-input" id="consumetime"
+						name="createtime" placeholder="yyyy-MM-dd" lay-verify="required">
+				</div>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">备注</label>
+			<div class="layui-input-block">
+				<textarea name="content" placeholder="请输入内容" class="layui-textarea"></textarea>
+			</div>
+		</div>
+
+		<div class="layui-form-item">
+			<div class="layui-input-block">
+				<center>
+					<button class="layui-btn" lay-submit lay-filter="subforConsume">LOST
+						IT</button>
+				</center>
+			</div>
+		</div>
+	</form>
+
+	<script type="text/javascript" src="plugins/layui/layui.js"></script>
+	<script type="text/javascript" src="plugins/jQuery/jquery-2.2.3.min.js"></script>
+	<script>
+		$(function() {
+			//注意：选项卡 依赖 element 模块，否则无法进行功能性操作
+			layui.use([ 'element', 'form', 'laydate' ], function() {
+				var element = layui.element;
+				var form = layui.form;
+				var laydate = layui.laydate;
+				$ = layui.jquery;
+	
+				laydate.render({
+					elem : '#consumetime'
+				});
+	
+				//收入按键
+				form.on('submit(subforConsume)', function(data) {
+					$.ajax({
+						url : "record/consume",
+						data : data.field,
+						type : "POST",
+						dataType : "json",
+						success : function(result) {
+							layer.alert(result.message);
+						}
+					})
+					return false; //不使用layui自带的表单提交方式
+				});
+	
+				//重新渲染select元素，获得最新的select选项
+				form.render("select");
+	
+	
+				//获取账户列表
+				$.ajax({
+					url : 'account/findAccountList',
+					type : "GET",
+					data : {
+						'iscash' : false
+					},
+					dataType : "json", //返回的数据类型格式
+					success : function(result) {
+						for (var i = 0; i < result.length; i++) {
+							$("select").append("<option value='" + result[i].id + "'>" + result[i].name + "</option>");
+						}
+						form.render("select");
+					}
+				});
+		
+			})
+		
+		})
+	</script>
+	<script type="text/javascript">
+			
+	</script>
+</body>
+</html>
