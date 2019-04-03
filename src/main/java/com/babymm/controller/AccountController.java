@@ -98,6 +98,7 @@ public class AccountController {
 		
 	}
 	
+	//删除记录
 	@RequestMapping("/deleteAccountById")
 	public Result deleteAccountById(int id) {
 		try {
